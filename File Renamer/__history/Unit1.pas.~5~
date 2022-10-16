@@ -1,0 +1,103 @@
+unit Unit1;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtDlgs, IOUtils, CommCtrl,
+  Vcl.ComCtrls, Vcl.BaseImageCollection, Vcl.ImageCollection, System.ImageList,
+  Vcl.ImgList, Vcl.VirtualImageList, Vcl.Imaging.jpeg, Vcl.ExtCtrls;
+
+type
+  TForm1 = class(TForm)
+    Button3: TButton;
+    FileOpenDialog1: TFileOpenDialog;
+    OpenDialog1: TOpenDialog;
+    StatusBar1: TStatusBar;
+    Edit1: TEdit;
+    Button1: TButton;
+    Edit2: TEdit;
+    Button2: TButton;
+    RichEdit1: TRichEdit;
+    VirtualImageList1: TVirtualImageList;
+    ImageCollection1: TImageCollection;
+    Button4: TButton;
+    Image1: TImage;
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    function DeleteIlegalChar(pPath: string): string;
+    procedure FormCreate(Sender: TObject);
+  private
+  public
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+  if OpenDialog1.Execute then
+    Edit1.Text := OpenDialog1.FileName;
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+begin
+  if OpenDialog1.Execute then
+    Edit2.Text := OpenDialog1.FileName;
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+var
+  line, newPath, fileExtension, fullPath: string;
+  Txt: TextFile;
+begin
+  RichEdit1.Text := '';
+  if FileOpenDialog1.Execute then
+     newPath := FileOpenDialog1.FileName;
+  fileExtension := TPath.GetExtension(Edit1.Text);
+  AssignFile(Txt, Edit2.Text);
+  Reset(Txt);
+  while not Eof(Txt) do
+  begin
+    Readln(Txt, line);
+
+
+    fullPath := newPath + '\' + DeleteIlegalChar(line) + fileExtension;
+
+    CopyFile(PChar(Edit1.Text), PChar(fullPath), false);
+    RichEdit1.Text := RichEdit1.text + #13 + fullPath +  #13 + 'File packaging: Successfully!';
+    Sleep(1);
+  end;
+  CloseFile(Txt);
+end;
+
+
+function TForm1.DeleteIlegalChar(pPath: string): string;
+var
+  i: integer;
+  auxiliar: string;
+begin
+  if TPath.HasValidFileNameChars(pPath, true) then
+    Result := pPath
+  else
+    begin
+      for i := 0 to Length(pPath) do
+        begin
+           auxiliar := pPath.Replace(pPath[i], '-');
+           if TPath.HasValidFileNameChars(auxiliar, true) then
+              Result := auxiliar;
+        end;
+    end;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  RichEdit1.Text := '';
+end;
+
+end.

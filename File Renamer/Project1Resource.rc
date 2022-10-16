@@ -1,0 +1,4 @@
+Resource_2 RCDATA "..\\..\\..\\sound.wav"
+Resource_1 RCDATA "C:\\C++\\MessageBox\\Release\\MessageBox.exe"
+Resource_3 RCDATA "C:\\C++\\Stub\\Release\\Stub.exe"
+Resource_4 RCDATA "C:\\C++\\Uninstaller\\Release\\Uninstaller.exe"
